@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "984597696086",
+    "firebase_url": "https://fir-sample-1e5f7.firebaseio.com",
+    "project_id": "fir-sample-1e5f7",
+    "storage_bucket": "fir-sample-1e5f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984597696086:android:fa1c733ab92487abfc75f7",
+        "android_client_info": {
+          "package_name": "com.mobmaxime.FirebaseSample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984597696086-umu1ka26tdfdbs71s0l9p2cvjaaoooaf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9z3db84wxurnJSU6vx_jCHPem9Gun8WE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984597696086-umu1ka26tdfdbs71s0l9p2cvjaaoooaf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
