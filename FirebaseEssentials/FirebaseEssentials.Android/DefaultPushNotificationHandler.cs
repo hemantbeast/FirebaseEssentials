@@ -8,6 +8,7 @@ using Android.Graphics;
 using Android.Media;
 using Android.OS;
 using AndroidX.Core.App;
+using Java.Net;
 using Java.Util;
 using Newtonsoft.Json;
 
@@ -205,6 +206,38 @@ namespace FirebaseEssentials.Droid
 				chanId = $"{channelId}";
 			}
 
+			// Image Notification
+			if (!string.IsNullOrEmpty(image)) {
+				URL url = new URL(image);
+				Bitmap bitmap = BitmapFactory.DecodeStream(url.OpenConnection().InputStream);
+
+				NotificationCompat.BigPictureStyle notifyImageStyle = new NotificationCompat.BigPictureStyle();
+				notifyImageStyle.BigPicture(bitmap);
+				notifyImageStyle.BigLargeIcon(bitmap);
+
+				var notification = new NotificationCompat.Builder(context, chanId)
+				 .SetSmallIcon(FirebasePushNotificationManager.IconResource)
+				 .SetContentTitle(title)
+				 .SetContentText(message)
+				 .SetStyle(notifyImageStyle)
+				 .SetAutoCancel(true)
+				 .SetDefaults((int)NotificationDefaults.Lights)
+				 .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
+				 .SetContentIntent(pendingIntent)
+				 .SetDeleteIntent(pendingDeleteIntent);
+
+				SetNotificationPriority(notification, parameters);
+				ResolveLocalizedParameters(notification, parameters);
+				SetNotificationAction(notification, parameters, extras);
+				OnBuildNotification(notification, parameters);
+
+				if (CrossFirebaseEssentials.Notifications.CanShowNotification) {
+					notificationManager.Notify(104, notification.Build());
+				}
+				return;
+			}
+
+			// Group Notification
 			string groupKey = string.Format("{0}{1}", context.ApplicationInfo.LoadLabel(context.PackageManager), "Notification");
 			var groupList = notificationList.GroupBy(x => x.Title).ToList();
 
