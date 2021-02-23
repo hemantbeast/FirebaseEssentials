@@ -51,13 +51,13 @@
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Essentials">
-      <Version>1.6.0</Version>
+      <Version>1.6.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Firebase.Analytics">
-      <Version>118.0.0</Version>
+      <Version>118.0.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Firebase.Crashlytics">
-      <Version>117.3.0</Version>
+      <Version>117.3.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.DataTransport.TransportRuntime">
       <Version>2.2.5</Version>

@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Runtime;
 using FirebaseEssentials.Droid;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
@@ -18,10 +19,17 @@ namespace FirebaseSample.Droid
 			ToolbarResource = Resource.Layout.Toolbar;
 
 			base.OnCreate(savedInstanceState);
+			Xamarin.Essentials.Platform.Init(this, savedInstanceState);
 			Forms.Init(this, savedInstanceState);
 
 			LoadApplication(new App());
 			FirebasePushNotificationManager.ProcessIntent(this, Intent);
+		}
+
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+		{
+			Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+			base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 
 		protected override void OnNewIntent(Intent intent)
