@@ -1,6 +1,6 @@
 # Firebase Essentials
 
-Simple cross platform plugin of Firebase basic implementation like Analytics, Crashlytics & Push Notifications for Xamarin Forms project.
+Simple cross platform plugin of Firebase basic implementation like Analytics, Authentication, Crashlytics & Push Notifications for Xamarin Forms project.
 
 Android & iOS platform support for now.
 
@@ -17,12 +17,17 @@ Android & iOS platform support for now.
 </resources>
 ```
 
+### Authentication
+* Follow firease authentication quickstart for impelementing google & facebook authentication
+* Setup google & facebook info in your app's manifest & plist
+
 ### API Usage
 * In your Android project's Application class or in MainActivity's onCreate() method
 ``` csharp
 	CrossFirebaseEssentials.Notifications = new FirebasePushNotificationManager();
 	CrossFirebaseEssentials.Analytics = new FirebaseAnalyticsManager();
 	CrossFirebaseEssentials.Crashlytics = new FirebaseCrashlyticsManager();
+	CrossFirebaseEssentials.Authentication = new FirebaseAuthenticationManager();
 
 	FirebaseEssentialsManager.Initialize(this);
 ```
@@ -32,6 +37,7 @@ Android & iOS platform support for now.
 	CrossFirebaseEssentials.Notifications = new FirebasePushNotificationManager();
 	CrossFirebaseEssentials.Analytics = new FirebaseAnalyticsManager();
 	CrossFirebaseEssentials.Crashlytics = new FirebaseCrashlyticsManager();
+	CrossFirebaseEssentials.Authentication = new FirebaseAuthenticationManager();
 
 	FirebaseEssentialsManager.Initialize(this);
 ```
@@ -40,6 +46,53 @@ Android & iOS platform support for now.
 ``` csharp
 	CrossFirebaseEssentials.Analytics.TrackScreen("screen name");
 ```
+
+* Authentication:
+  1. Initialize google or facebook login in your page's OnAppearing()
+  ``` csharp
+  	CrossFirebaseEssentials.Authentication.Initialize(AuthType.Google, googleClientId);
+  	CrossFirebaseEssentials.Authentication.Initialize(AuthType.Phone)
+  ```
+
+  2. Then for login/logout, call below method
+  ``` csharp
+  	CrossFirebaseEssentials.Authentication.SignIn(AuthType.Google);
+  	CrossFirebaseEssentials.Authentication.SignOut(AuthType.Google);
+  ```
+
+  3. To get the status for login, call below action
+  ``` csharp
+  	CrossFirebaseEssentials.Authentication.OnVerification += (sender, args) => {
+  		switch (args.Status) {
+  			case VerificationStatus.Initialized:
+  			 break;
+  			case VerificationStatus.Success:
+  			 break;
+  			case VerificationStatus.CodeSent:
+  			 break;
+  			case VerificationStatus.Failed:
+  			 break;
+  		}
+  	};
+  ```
+
+  4. For phone verification, first call below method after getting phone number
+  ``` csharp
+  	CrossFirebaseEssentials.Authentication.StartVerification(phoneNumber);
+  ```
+  Then we need to open the sms verification page on `CodeSent` status. And after getting sms code
+  ``` csharp
+  	CrossFirebaseEssentials.Authentication.SubmitVerificationCode(smsCode);
+  ```
+  In case we need to resend the verification code again
+  ``` csharp
+  	CrossFirebaseEssentials.Authentication.ResendVerificationCode(phoneNumber);
+  ```
+
+  5. At last, get user info with access token
+  ``` csharp
+  	var user = await CrossFirebaseEssentials.Authentication.GetUser();
+  ```
 
 * Crashlytics: To log exception from your forms project
 ``` csharp
