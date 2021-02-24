@@ -26,6 +26,12 @@ namespace FirebaseSample.Droid
 			FirebasePushNotificationManager.ProcessIntent(this, Intent);
 		}
 
+		protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
+		{
+			base.OnActivityResult(requestCode, resultCode, data);
+			await FirebaseAuthenticationManager.OnActivityResult(requestCode, resultCode, data);
+		}
+
 		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
 		{
 			Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);

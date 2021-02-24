@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Class="FirebaseSample.UserInfoPage"
+	Title="User Info">
+	<ContentPage.Content>
+		<Grid>
+			<ScrollView
+				Orientation="Vertical"
+				VerticalScrollBarVisibility="Never">
+				<StackLayout
+					Spacing="15"
+					Padding="20"
+					Orientation="Vertical">
+					<Frame
+						x:Name="imgFrame"
+						Padding="0"
+						HeightRequest="150"
+						WidthRequest="150"
+						CornerRadius="75"
+						HasShadow="False"
+						HorizontalOptions="Center">
+						<Image
+							x:Name="image"
+							HeightRequest="150"
+							WidthRequest="150" />
+					</Frame>
+					<Grid
+						x:Name="nameView"
+						ColumnDefinitions="120, *"
+						ColumnSpacing="10">
+						<Label
+							Grid.Column="0"
+							Text="Name"
+							TextColor="Gray"
+							FontSize="14"
+							HorizontalTextAlignment="Start"
+							VerticalTextAlignment="Center" />
+						<Label
+							Grid.Column="1"
+							x:Name="lblName"
+							TextColor="Black"
+							FontSize="14"
+							HorizontalTextAlignment="Start"
+							VerticalTextAlignment="Center" />
+					</Grid>
+					<Grid
+						x:Name="emailView"
+						ColumnDefinitions="120, *"
+						ColumnSpacing="10">
+						<Label
+							Grid.Column="0"
+							Text="Email"
+							TextColor="Gray"
+							FontSize="14"
+							HorizontalTextAlignment="Start"
+							VerticalTextAlignment="Center" />
+						<Label
+							Grid.Column="1"
+							x:Name="lblEmail"
+							TextColor="Black"
+							FontSize="14"
+							HorizontalTextAlignment="Start"
+							VerticalTextAlignment="Center" />
+					</Grid>
+					<Grid
+						x:Name="phoneView"
+						ColumnDefinitions="120, *"
+						ColumnSpacing="10">
+						<Label
+							Grid.Column="0"
+							Text="Phone Number"
+							TextColor="Gray"
+							FontSize="14"
+							HorizontalTextAlignment="Start"
+							VerticalTextAlignment="Center" />
+						<Label
+							Grid.Column="1"
+							x:Name="lblPhone"
+							TextColor="Black"
+							FontSize="14"
+							HorizontalTextAlignment="Start"
+							VerticalTextAlignment="Center" />
+					</Grid>
+					<Button
+						Text="Logout"
+						TextColor="White"
+						FontSize="14"
+						CornerRadius="0"
+						HeightRequest="40"
+						Clicked="LogoutClicked"
+						VerticalOptions="EndAndExpand"
+						BackgroundColor="Teal" />
+				</StackLayout>
+			</ScrollView>
+			<ActivityIndicator
+				x:Name="indicator"
+				HeightRequest="50"
+				WidthRequest="50"
+				HorizontalOptions="Center"
+				VerticalOptions="Center"
+				IsRunning="True"
+				Color="DodgerBlue" />
+		</Grid>
+	</ContentPage.Content>
+</ContentPage>

@@ -21,6 +21,7 @@ namespace FirebaseSample.Droid
 			CrossFirebaseEssentials.Notifications = new FirebasePushNotificationManager();
 			CrossFirebaseEssentials.Analytics = new FirebaseAnalyticsManager();
 			CrossFirebaseEssentials.Crashlytics = new FirebaseCrashlyticsManager();
+			CrossFirebaseEssentials.Authentication = new FirebaseAuthenticationManager();
 
 			//Set the default notification channel for your app when running Android Oreo
 			if (Build.VERSION.SdkInt >= BuildVersionCodes.O) {

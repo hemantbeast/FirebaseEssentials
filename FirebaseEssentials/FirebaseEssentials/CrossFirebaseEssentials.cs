@@ -9,5 +9,7 @@ namespace FirebaseEssentials
 		public static IFirebaseAnalytics Analytics { get; set; }
 
 		public static IFirebaseCrashlytics Crashlytics { get; set; }
+
+		public static IFirebaseAuth Authentication { get; set; }
 	}
 }

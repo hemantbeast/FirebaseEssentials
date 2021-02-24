@@ -40,5 +40,19 @@
 	</array>
 	<key>CFBundleShortVersionString</key>
 	<string>1</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb726542914919307</string>
+				<string>com.googleusercontent.apps.984597696086-nuortiesil6hs2c51lvt5vquu8skfltm</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>726542914919307</string>
+	<key>FacebookDisplayName</key>
+	<string>Firebase Sample</string>
 </dict>
 </plist>

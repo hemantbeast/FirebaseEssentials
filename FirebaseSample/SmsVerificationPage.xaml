@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	x:Class="FirebaseSample.SmsVerificationPage"
+	Title="Verification Code">
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<Style
+				x:Key="smsEntryStyle"
+				TargetType="Entry">
+				<Setter
+					Property="TextColor"
+					Value="Black" />
+				<Setter
+					Property="FontSize"
+					Value="16" />
+				<Setter
+					Property="Keyboard"
+					Value="Numeric" />
+				<Setter
+					Property="MaxLength"
+					Value="1" />
+				<Setter
+					Property="HeightRequest"
+					Value="40" />
+				<Setter
+					Property="WidthRequest"
+					Value="30" />
+				<Setter
+					Property="ReturnType"
+					Value="Next" />
+				<Setter
+					Property="HorizontalTextAlignment"
+					Value="Center" />
+				<Setter
+					Property="VerticalTextAlignment"
+					Value="Center" />
+			</Style>
+		</ResourceDictionary>
+	</ContentPage.Resources>
+	<ContentPage.Content>
+		<Grid>
+			<ScrollView
+				Orientation="Vertical"
+				VerticalScrollBarVisibility="Never">
+				<StackLayout
+					Spacing="0"
+					Padding="35,20"
+					Orientation="Vertical">
+					<Label
+						Text="Enter Verification Code"
+						TextColor="Black"
+						FontSize="20"
+						FontAttributes="Bold"
+						HorizontalTextAlignment="Center"
+						VerticalTextAlignment="Center" />
+					<Grid
+						x:Name="grdCode"
+						Margin="20,30"
+						ColumnSpacing="15"
+						ColumnDefinitions="30, 30, 30, 30, 30, 30"
+						HorizontalOptions="Center">
+						<Entry
+							Grid.Column="0"
+							ClassId="1"
+							TextChanged="EntryTextChanged"
+							Style="{StaticResource smsEntryStyle}" />
+						<Entry
+							Grid.Column="1"
+							ClassId="2"
+							TextChanged="EntryTextChanged"
+							Style="{StaticResource smsEntryStyle}" />
+						<Entry
+							Grid.Column="2"
+							ClassId="3"
+							TextChanged="EntryTextChanged"
+							Style="{StaticResource smsEntryStyle}" />
+						<Entry
+							Grid.Column="3"
+							ClassId="4"
+							TextChanged="EntryTextChanged"
+							Style="{StaticResource smsEntryStyle}" />
+						<Entry
+							Grid.Column="4"
+							ClassId="5"
+							TextChanged="EntryTextChanged"
+							Style="{StaticResource smsEntryStyle}" />
+						<Entry
+							Grid.Column="5"
+							ClassId="6"
+							TextChanged="EntryTextChanged"
+							Style="{StaticResource smsEntryStyle}"
+							ReturnType="Done" />
+					</Grid>
+					<Button
+						Text="Next"
+						TextColor="White"
+						FontSize="14"
+						CornerRadius="5"
+						HeightRequest="40"
+						Clicked="NextClicked"
+						BackgroundColor="Teal" />
+					<Button
+						Margin="0,10,0,0"
+						Text="Resend code"
+						TextColor="White"
+						FontSize="14"
+						CornerRadius="5"
+						HeightRequest="40"
+						Clicked="ResendClicked"
+						BackgroundColor="Teal" />
+					<ActivityIndicator
+						x:Name="indicator"
+						Margin="0,10,0,0"
+						HeightRequest="50"
+						WidthRequest="50"
+						HorizontalOptions="Center"
+						VerticalOptions="Center"
+						IsRunning="False"
+						IsVisible="false"
+						Color="DodgerBlue" />
+				</StackLayout>
+			</ScrollView>
+		</Grid>
+	</ContentPage.Content>
+</ContentPage>

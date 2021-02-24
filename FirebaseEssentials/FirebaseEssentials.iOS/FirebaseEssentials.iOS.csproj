@@ -97,6 +97,7 @@
     <Compile Include="FirebaseAnalyticsManager.cs" />
     <Compile Include="FirebaseEssentialsManager.cs" />
     <Compile Include="FirebaseCrashlyticsManager.cs" />
+    <Compile Include="FirebaseAuthenticationManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -123,13 +124,22 @@
     <PackageReference Include="Xamarin.Firebase.iOS.Crashlytics">
       <Version>4.6.2</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.Facebook.iOS">
+      <Version>7.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Google.iOS.SignIn">
+      <Version>5.0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Firebase.iOS.Auth">
+      <Version>6.9.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FirebaseEssentials\FirebaseEssentials.csproj">
-      <Project>{92374286-3BE1-408D-83C1-2460D738E602}</Project>
+      <Project>{DD3BCBD9-C6AB-467E-ACF4-0D3161CDD47F}</Project>
       <Name>FirebaseEssentials</Name>
     </ProjectReference>
   </ItemGroup>

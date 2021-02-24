@@ -30,6 +30,13 @@
             {
               "client_id": "984597696086-umu1ka26tdfdbs71s0l9p2cvjaaoooaf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "984597696086-nuortiesil6hs2c51lvt5vquu8skfltm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mobmaxime.FirebaseSample"
+              }
             }
           ]
         }

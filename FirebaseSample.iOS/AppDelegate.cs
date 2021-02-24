@@ -18,6 +18,7 @@ namespace FirebaseSample.iOS
 			CrossFirebaseEssentials.Notifications = new FirebasePushNotificationManager();
 			CrossFirebaseEssentials.Analytics = new FirebaseAnalyticsManager();
 			CrossFirebaseEssentials.Crashlytics = new FirebaseCrashlyticsManager();
+			CrossFirebaseEssentials.Authentication = new FirebaseAuthenticationManager();
 
 			FirebaseEssentialsManager.Initialize(options);
 
@@ -40,6 +41,11 @@ namespace FirebaseSample.iOS
 			FirebasePushNotificationManager.DidReceiveMessage(userInfo);
 			Console.WriteLine(userInfo);
 			completionHandler(UIBackgroundFetchResult.NewData);
+		}
+
+		public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
+		{
+			return FirebaseAuthenticationManager.OpenUrl(app, url, options);
 		}
 	}
 }
