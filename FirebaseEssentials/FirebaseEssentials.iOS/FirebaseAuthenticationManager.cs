@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+using AuthenticationServices;
 using Facebook.CoreKit;
 using Facebook.LoginKit;
 using Firebase.Auth;
@@ -13,14 +16,18 @@ using GoogleSignIn = Google.SignIn.SignIn;
 
 namespace FirebaseEssentials.iOS
 {
-	public class FirebaseAuthenticationManager : NSObject, IFirebaseAuth, ISignInDelegate
+	public class FirebaseAuthenticationManager : NSObject, IFirebaseAuth, ISignInDelegate, IASAuthorizationControllerDelegate, IASAuthorizationControllerPresentationContextProviding
 	{
 		AuthType authType;
-		string googleToken, facebookToken;
+		string appleToken, googleToken, facebookToken;
 
 		// Facebook
 		LoginManager loginManager;
 		readonly List<string> readPermissions = new List<string> { "public_profile", "email" };
+
+		// Apple
+		string currentNonce = string.Empty;
+		private bool IsVersion13 => UIDevice.CurrentDevice.CheckSystemVersion(13, 0);
 
 		public void Initialize(AuthType type, string clientId = "")
 		{
@@ -72,6 +79,9 @@ namespace FirebaseEssentials.iOS
 				};
 
 				switch (authType) {
+					case AuthType.Apple:
+						firebaseUser.Token = isFirebaseToken ? token : appleToken;
+						break;
 					case AuthType.Google:
 						firebaseUser.Token = isFirebaseToken ? token : googleToken;
 						break;
@@ -139,6 +149,21 @@ namespace FirebaseEssentials.iOS
 						SetVerificationStatus(VerificationStatus.Initialized);
 					}
 					break;
+
+				case AuthType.Apple:
+					if (IsVersion13) {
+						currentNonce = RandomNonceString();
+						var appleIdProvider = new ASAuthorizationAppleIdProvider();
+						var request = appleIdProvider.CreateRequest();
+						request.RequestedScopes = new[] { ASAuthorizationScope.Email, ASAuthorizationScope.FullName };
+
+						var authorizationController = new ASAuthorizationController(new[] { request }) {
+							Delegate = this,
+							PresentationContextProvider = this
+						};
+						authorizationController.PerformRequests();
+					}
+					break;
 			}
 		}
 
@@ -147,6 +172,10 @@ namespace FirebaseEssentials.iOS
 			var signedOut = Auth.DefaultInstance.SignOut(out _);
 
 			switch (type) {
+				case AuthType.Apple:
+					appleToken = string.Empty;
+					break;
+
 				case AuthType.Google:
 					if (signedOut) {
 						googleToken = string.Empty;
@@ -168,6 +197,10 @@ namespace FirebaseEssentials.iOS
 			var signedOut = Auth.DefaultInstance.SignOut(out _);
 
 			switch (type) {
+				case AuthType.Apple:
+					appleToken = string.Empty;
+					break;
+
 				case AuthType.Google:
 					if (signedOut) {
 						googleToken = string.Empty;
@@ -213,6 +246,57 @@ namespace FirebaseEssentials.iOS
 				facebookToken = string.Empty;
 				SetVerificationStatus(VerificationStatus.Failed, error.LocalizedDescription);
 			}
+		}
+		#endregion
+
+		#region Apple
+		[Export("authorizationController:didCompleteWithAuthorization:")]
+		public void DidComplete(ASAuthorizationController controller, ASAuthorization authorization)
+		{
+			var credential = authorization.GetCredential<ASAuthorizationAppleIdCredential>();
+
+			if (credential != null && !string.IsNullOrEmpty(currentNonce)) {
+				appleToken = credential.IdentityToken.ToString();
+				var firebaseCredential = OAuthProvider.GetCredentialWithRawNonce("apple.com", credential.IdentityToken.ToString(), currentNonce);
+				Auth.DefaultInstance.SignInWithCredential(firebaseCredential, SignInOnCompletion);
+			} else {
+				appleToken = string.Empty;
+				SetVerificationStatus(VerificationStatus.Failed, "Sign in failed");
+			}
+		}
+
+		[Export("authorizationController:didCompleteWithError:")]
+		public void DidComplete(ASAuthorizationController controller, NSError error)
+		{
+			SetVerificationStatus(VerificationStatus.Failed, error.LocalizedDescription);
+		}
+
+		public UIWindow GetPresentationAnchor(ASAuthorizationController controller)
+		{
+			return GetTopViewController().View.Window;
+		}
+
+		private string RandomNonceString(int length = 32)
+		{
+			var random = RandomNumberGenerator.Create();
+			var data = new byte[length];
+			random.GetNonZeroBytes(data);
+
+			var base64 = Convert.ToBase64String(data, 0, data.Length);
+			var base64Url = new StringBuilder();
+
+			foreach (var c in base64) {
+				if (c == '+')
+					base64Url.Append('-');
+				else if (c == '/')
+					base64Url.Append('_');
+				else if (c == '=')
+					break;
+				else
+					base64Url.Append(c);
+			}
+
+			return base64Url.ToString();
 		}
 		#endregion
 
