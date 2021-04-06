@@ -18,7 +18,7 @@ Android & iOS platform support for now.
 ```
 
 ### Authentication
-* Follow firease authentication quickstart for impelementing google & facebook authentication
+* Follow firebase authentication quickstart for implementing google & facebook authentication
 * Setup google & facebook info in your app's manifest & plist
 
 ### API Usage
