@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Gms.Auth.Api.SignIn;
+using Android.Gms.Extensions;
 using Firebase;
 using Firebase.Auth;
 using Java.Lang;
@@ -17,6 +18,7 @@ namespace FirebaseEssentials.Droid
 	{
 		static int RC_SIGN_IN = 9001;
 		static AuthType authType;
+		static string googleToken, facebookToken;
 
 		// Google
 		GoogleSignInClient signInClient;
@@ -60,11 +62,12 @@ namespace FirebaseEssentials.Droid
 		public static async Task OnActivityResult(int requestCode, Result resultCode, Intent data)
 		{
 			if (requestCode == RC_SIGN_IN) {
-				var result = GoogleSignIn.GetSignedInAccountFromIntent(data);
+				var result = await GoogleSignIn.GetSignedInAccountFromIntent(data).AsAsync<GoogleSignInAccount>();
 
-				if (result.IsSuccessful) {
-					var account = result.Result as GoogleSignInAccount;
-					var credential = GoogleAuthProvider.GetCredential(account.IdToken, null);
+				if (result != null) {
+					googleToken = result.IdToken;
+
+					var credential = GoogleAuthProvider.GetCredential(result.IdToken, null);
 					var firebaseResult = await FirebaseAuth.Instance.SignInWithCredentialAsync(credential);
 
 					if (firebaseResult != null) {
@@ -73,6 +76,7 @@ namespace FirebaseEssentials.Droid
 						(CrossFirebaseEssentials.Authentication as FirebaseAuthenticationManager).SetVerificationStatus(VerificationStatus.Failed);
 					}
 				} else {
+					googleToken = string.Empty;
 					(CrossFirebaseEssentials.Authentication as FirebaseAuthenticationManager).SetVerificationStatus(VerificationStatus.Failed);
 				}
 			} else {
@@ -80,28 +84,39 @@ namespace FirebaseEssentials.Droid
 			}
 		}
 
-		public async Task<FirebaseUser> GetUser()
+		public async Task<FirebaseUser> GetUser(bool isFirebaseToken)
 		{
 			var user = FirebaseAuth.Instance.CurrentUser;
 
 			if (user != null) {
 				var token = string.Empty;
-				var tokenResult = user.GetIdToken(true);
-				await Task.Delay(100);
+				var tokenResult = await user.GetIdToken(true).AsAsync<GetTokenResult>();
 
-				if (tokenResult.IsSuccessful) {
-					token = (tokenResult.Result as GetTokenResult).Token;
+				if (tokenResult != null) {
+					token = tokenResult.Token;
 				}
 
-				return new FirebaseUser {
+				var firebaseUser = new FirebaseUser {
 					DisplayName = user.DisplayName,
 					Email = user.Email,
 					Id = user.Uid,
 					PhotoUrl = user.PhotoUrl?.ToString(),
 					PhoneNumber = user.PhoneNumber,
-					Type = authType,
-					Token = token
+					Type = authType
 				};
+
+				switch (authType) {
+					case AuthType.Google:
+						firebaseUser.Token = isFirebaseToken ? token : googleToken;
+						break;
+					case AuthType.Facebook:
+						firebaseUser.Token = isFirebaseToken ? token : facebookToken;
+						break;
+					default:
+						firebaseUser.Token = token;
+						break;
+				}
+				return firebaseUser;
 			} else {
 				return null;
 			}
@@ -202,10 +217,12 @@ namespace FirebaseEssentials.Droid
 
 			switch (type) {
 				case AuthType.Facebook:
+					facebookToken = string.Empty;
 					LoginManager.Instance.LogOut();
 					break;
 
 				case AuthType.Google:
+					googleToken = string.Empty;
 					if (signInClient != null) {
 						await signInClient.SignOutAsync();
 					}
@@ -219,10 +236,12 @@ namespace FirebaseEssentials.Droid
 
 			switch (type) {
 				case AuthType.Facebook:
+					facebookToken = string.Empty;
 					LoginManager.Instance.LogOut();
 					break;
 
 				case AuthType.Google:
+					googleToken = string.Empty;
 					if (signInClient != null) {
 						await signInClient.RevokeAccessAsync();
 					}
@@ -256,6 +275,7 @@ namespace FirebaseEssentials.Droid
 		public async void OnSuccess(Java.Lang.Object result)
 		{
 			if (AccessToken.CurrentAccessToken != null) {
+				facebookToken = AccessToken.CurrentAccessToken.Token;
 				var credential = FacebookAuthProvider.GetCredential(AccessToken.CurrentAccessToken.Token);
 				var firebaseResult = await FirebaseAuth.Instance.SignInWithCredentialAsync(credential);
 
@@ -264,6 +284,9 @@ namespace FirebaseEssentials.Droid
 				} else {
 					SetVerificationStatus(VerificationStatus.Failed);
 				}
+			} else {
+				facebookToken = string.Empty;
+				SetVerificationStatus(VerificationStatus.Failed);
 			}
 		}
 		#endregion

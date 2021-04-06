@@ -16,6 +16,7 @@ namespace FirebaseEssentials.iOS
 	public class FirebaseAuthenticationManager : NSObject, IFirebaseAuth, ISignInDelegate
 	{
 		AuthType authType;
+		string googleToken, facebookToken;
 
 		// Facebook
 		LoginManager loginManager;
@@ -53,7 +54,7 @@ namespace FirebaseEssentials.iOS
 			return ApplicationDelegate.SharedInstance.OpenUrl(app, url, options);
 		}
 
-		public async Task<FirebaseUser> GetUser()
+		public async Task<FirebaseUser> GetUser(bool isFirebaseToken)
 		{
 			var user = Auth.DefaultInstance.CurrentUser;
 
@@ -61,15 +62,27 @@ namespace FirebaseEssentials.iOS
 				var tokenResult = await user.GetIdTokenResultAsync();
 				string token = tokenResult?.Token;
 
-				return new FirebaseUser {
+				var firebaseUser = new FirebaseUser {
 					DisplayName = user.DisplayName,
 					Email = user.Email,
 					Id = user.Uid,
 					PhoneNumber = user.PhoneNumber,
 					PhotoUrl = user.PhotoUrl?.AbsoluteString,
-					Type = authType,
-					Token = token
+					Type = authType
 				};
+
+				switch (authType) {
+					case AuthType.Google:
+						firebaseUser.Token = isFirebaseToken ? token : googleToken;
+						break;
+					case AuthType.Facebook:
+						firebaseUser.Token = isFirebaseToken ? token : facebookToken;
+						break;
+					default:
+						firebaseUser.Token = token;
+						break;
+				}
+				return firebaseUser;
 			} else {
 				return null;
 			}
@@ -136,12 +149,14 @@ namespace FirebaseEssentials.iOS
 			switch (type) {
 				case AuthType.Google:
 					if (signedOut) {
+						googleToken = string.Empty;
 						GoogleSignIn.SharedInstance.SignOutUser();
 					}
 					break;
 
 				case AuthType.Facebook:
 					if (signedOut && loginManager != null) {
+						facebookToken = string.Empty;
 						loginManager.LogOut();
 					}
 					break;
@@ -155,12 +170,14 @@ namespace FirebaseEssentials.iOS
 			switch (type) {
 				case AuthType.Google:
 					if (signedOut) {
+						googleToken = string.Empty;
 						GoogleSignIn.SharedInstance.DisconnectUser();
 					}
 					break;
 
 				case AuthType.Facebook:
 					if (signedOut && loginManager != null) {
+						facebookToken = string.Empty;
 						loginManager.LogOut();
 					}
 					break;
@@ -172,10 +189,12 @@ namespace FirebaseEssentials.iOS
 		{
 			if (error == null && user != null) {
 				var authentication = user.Authentication;
+				googleToken = authentication.IdToken;
 				var credential = GoogleAuthProvider.GetCredential(authentication.IdToken, authentication.AccessToken);
 
 				Auth.DefaultInstance.SignInWithCredential(credential, SignInOnCompletion);
 			} else {
+				googleToken = string.Empty;
 				SetVerificationStatus(VerificationStatus.Failed, error.LocalizedDescription);
 			}
 		}
@@ -186,10 +205,12 @@ namespace FirebaseEssentials.iOS
 		{
 			if (error == null) {
 				if (AccessToken.CurrentAccessToken != null) {
+					facebookToken = AccessToken.CurrentAccessToken.TokenString;
 					var credential = FacebookAuthProvider.GetCredential(AccessToken.CurrentAccessToken.TokenString);
 					Auth.DefaultInstance.SignInWithCredential(credential, SignInOnCompletion);
 				}
 			} else {
+				facebookToken = string.Empty;
 				SetVerificationStatus(VerificationStatus.Failed, error.LocalizedDescription);
 			}
 		}

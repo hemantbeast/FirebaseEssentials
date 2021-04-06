@@ -19,7 +19,7 @@ namespace FirebaseEssentials
 
 		Task Disconnect(AuthType type);
 
-		Task<FirebaseUser> GetUser();
+		Task<FirebaseUser> GetUser(bool isFirebaseToken = false);
 
 		event EventHandler<VerificationEventArgs> OnVerification;
 	}
