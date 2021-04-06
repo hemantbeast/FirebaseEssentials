@@ -68,13 +68,13 @@ namespace FirebaseEssentials.Droid
 
 		public const string LinkPathKey = "link_path";
 
-		NotificationManagerCompat notificationManager;
-		AppPreferences appPreferences;
-		Context context;
+		readonly NotificationManagerCompat notificationManager;
+		readonly AppPreferences appPreferences;
+		readonly Context context;
 
 		public DefaultPushNotificationHandler()
 		{
-			context = Xamarin.Essentials.Platform.CurrentActivity != null ? Xamarin.Essentials.Platform.CurrentActivity : Application.Context;
+			context = Xamarin.Essentials.Platform.CurrentActivity ?? Application.Context;
 			appPreferences = new AppPreferences(context);
 			appPreferences.SaveNotification(new List<NotificationModel>());
 			notificationManager = NotificationManagerCompat.From(context);
@@ -324,8 +324,8 @@ namespace FirebaseEssentials.Droid
 							var aRequestCode = Guid.NewGuid().GetHashCode();
 
 							if (userCat.Category.Equals(category, StringComparison.CurrentCultureIgnoreCase)) {
-								Intent actionIntent = null;
-								PendingIntent pendingActionIntent = null;
+								Intent actionIntent;
+								PendingIntent pendingActionIntent;
 
 								if (action.Type == NotificationActionType.Foreground) {
 									actionIntent = typeof(Activity).IsAssignableFrom(FirebasePushNotificationManager.NotificationActivityType) ? new Intent(Application.Context, FirebasePushNotificationManager.NotificationActivityType) : (FirebasePushNotificationManager.DefaultNotificationActivityType == null ? context.PackageManager.GetLaunchIntentForPackage(context.PackageName) : new Intent(Application.Context, FirebasePushNotificationManager.DefaultNotificationActivityType));

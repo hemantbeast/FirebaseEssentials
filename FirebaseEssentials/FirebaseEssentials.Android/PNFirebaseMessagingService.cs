@@ -73,7 +73,23 @@ namespace FirebaseEssentials.Droid
 
 			foreach (var d in message.Data) {
 				if (!parameters.ContainsKey(d.Key)) {
-					parameters.Add(d.Key, d.Value);
+					switch (d.Key.ToLower()) {
+						case DefaultPushNotificationHandler.BodyKey:
+							parameters.Add(DefaultPushNotificationHandler.BodyKey, d.Value);
+							break;
+						case DefaultPushNotificationHandler.TitleKey:
+							parameters.Add(DefaultPushNotificationHandler.TitleKey, d.Value);
+							break;
+						case DefaultPushNotificationHandler.ImageKey:
+							parameters.Add(DefaultPushNotificationHandler.ImageKey, d.Value);
+							break;
+						case DefaultPushNotificationHandler.IconKey:
+							parameters.Add(DefaultPushNotificationHandler.IconKey, d.Value);
+							break;
+						default:
+							parameters.Add(d.Key.ToLower(), d.Value);
+							break;
+					}
 				}
 			}
 
