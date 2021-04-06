@@ -48,7 +48,7 @@
       <Version>121.0.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Essentials">
       <Version>1.6.1</Version>
@@ -60,7 +60,7 @@
       <Version>117.3.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.DataTransport.TransportRuntime">
-      <Version>2.2.5</Version>
+      <Version>2.2.6</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Facebook.Android">
       <Version>7.1.0</Version>
